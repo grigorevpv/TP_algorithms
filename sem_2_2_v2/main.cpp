@@ -1,3 +1,15 @@
+/*
+ 2_4. Скользящий максимум.
+Дан массив натуральных чисел A[0..n), n не превосходит 10^8. Так же задан размер некоторого
+окна (последовательно расположенных элементов массива) в этом массиве k, k<=n. Требуется
+для каждого положения окна (от 0 и до n-k) вывести значение максимума в окне.
+Скорость работы O(n log n), память O(n).
+Формат входных данных. Вначале вводится n - количество элементов массива. Затем вводится n
+строк со значением каждого элемента. Затем вводится k - размер окна.
+Формат выходных данных. Разделенные пробелом значения максимумов для каждого положения
+окна.
+ */
+
 #include <iostream>
 #include <vector>
 #include <cassert>
@@ -28,11 +40,9 @@ public:
     CHeap() : numberOfElements(0), sizeOfWindow(0) {};
     ~CHeap() {};
 
-    friend istream& operator>> ( istream& is, CHeap& heap );
-
-//    int getMaximum();
+    friend istream& operator>> ( istream& , CHeap& );
     void insertWithPriority( Element element );
-    Element peekAtNext( int first );
+    Element findMaxInWindow( int first );
     void makeHeap();
     int getMax(){ return arr[0].value; }
     void siftDown( vector<Element>& , int );
@@ -72,16 +82,6 @@ bool operator<= (  Element& left,  Element& right ) {
     return ( left.value <= right.value );
 }
 
-/*void CHeap::siftUp(vector<Element>& arr, int index) {
-    while( index > 0 ) {
-        int parent = ( index - 1 ) / 2;
-        if( arr[index] <= arr[parent] )
-            return;
-        cSwap( arr[index], arr[parent] );
-        index = parent;
-    }
-}*/
-
 void CHeap::siftDown(vector<Element> & arr, int i) {
     int left = 2 * i + 1;
     int right = 2 * i + 2;
@@ -100,21 +100,6 @@ void CHeap::siftDown(vector<Element> & arr, int i) {
 
 }
 
-//int CHeap::getMaximum(  ) {
-//    assert( arr.size() != 0 );
-//
-//    int result = arr[0].value;
-//
-//// Переносим последний элемент в корень.
-//    arr[0] = arr[arr.size() - 1];
-//    arr.pop_back();
-//// Вызываем SiftDown для корня.
-//    if( arr.size() != 0 ) {
-//        siftDown( arr, 0 );
-//    }
-//    return result;
-//}
-
 void CHeap::insertWithPriority( Element element) {
     arr.push_back( element );
     siftUp( arr, arr.size() - 1 );
@@ -127,10 +112,10 @@ void CHeap::siftUp( vector<Element>& arr, int index ) {
             return;
         cSwap( arr[index], arr[parent] );
         index = parent;
-        }
+    }
 }
 
-Element CHeap::peekAtNext( int first ) {
+Element CHeap::findMaxInWindow( int first ) {
 
     while ( arr[0].index < first ){
         arr[0] = arr[arr.size() - 1];
@@ -155,7 +140,7 @@ vector<int> caolculateMax( vector<Element>& heap, int sizeWindow ){
     result.push_back( window.getMax() );
     for( int i = sizeWindow; i < heap.size(); i++ ){
         window.insertWithPriority( heap[i] );
-        result.push_back( window.peekAtNext( i - sizeWindow ).value );
+        result.push_back( window.findMaxInWindow( i - sizeWindow + 1 ).value );  // в результат записывается максимум, согласно положению окна и индексам элементов в куче
     }
     return result;
 }
@@ -163,6 +148,7 @@ vector<int> caolculateMax( vector<Element>& heap, int sizeWindow ){
 int main() {
     vector<Element> arr;
     int count = 0;
+
     cin >> count;
 
     int i = 0;
@@ -175,7 +161,6 @@ int main() {
 
     int windowSize = 0;
     cin >> windowSize;
-
     vector<int> result = caolculateMax( arr, windowSize );
 
     for( auto k : result ){
