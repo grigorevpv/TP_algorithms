@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/grigo/ClionProjects/TP/algorithms/TP_algorithms/sem_2_2_v2/main.cpp
+iostream
+-
+vector
+-
+cassert
+-
+

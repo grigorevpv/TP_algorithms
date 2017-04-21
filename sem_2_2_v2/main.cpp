@@ -28,15 +28,11 @@ public:
     CHeap() : numberOfElements(0), sizeOfWindow(0) {};
     ~CHeap() {};
 
-    friend istream& operator>> ( istream& , CHeap& );
-    friend bool operator> (  Element& left,  Element& right );
-    friend bool operator<= (  Element& left,  Element& right );
-    int getMaximum();
+    friend istream& operator>> ( istream& is, CHeap& heap );
+
+//    int getMaximum();
     void insertWithPriority( Element element );
     Element peekAtNext( int first );
-    int getSizeOfWindow(){ return sizeOfWindow; }
-    vector<Element>::iterator getArrayAdr(){ return arr.begin(); }
-    int getArraySize(){ return arr.size(); }
     void makeHeap();
     int getMax(){ return arr[0].value; }
     void siftDown( vector<Element>& , int );
@@ -104,20 +100,20 @@ void CHeap::siftDown(vector<Element> & arr, int i) {
 
 }
 
-int CHeap::getMaximum(  ) {
-    assert( arr.size() != 0 );
-
-    int result = arr[0].value;
-
-// Переносим последний элемент в корень.
-    arr[0] = arr[arr.size() - 1];
-    arr.pop_back();
-// Вызываем SiftDown для корня.
-    if( arr.size() != 0 ) {
-        siftDown( arr, 0 );
-    }
-    return result;
-}
+//int CHeap::getMaximum(  ) {
+//    assert( arr.size() != 0 );
+//
+//    int result = arr[0].value;
+//
+//// Переносим последний элемент в корень.
+//    arr[0] = arr[arr.size() - 1];
+//    arr.pop_back();
+//// Вызываем SiftDown для корня.
+//    if( arr.size() != 0 ) {
+//        siftDown( arr, 0 );
+//    }
+//    return result;
+//}
 
 void CHeap::insertWithPriority( Element element) {
     arr.push_back( element );
@@ -167,11 +163,9 @@ vector<int> caolculateMax( vector<Element>& heap, int sizeWindow ){
 int main() {
     vector<Element> arr;
     int count = 0;
-
     cin >> count;
 
     int i = 0;
-
     while( i < count ){
         int value = 0;
         cin >> value;
@@ -180,7 +174,6 @@ int main() {
     }
 
     int windowSize = 0;
-
     cin >> windowSize;
 
     vector<int> result = caolculateMax( arr, windowSize );
