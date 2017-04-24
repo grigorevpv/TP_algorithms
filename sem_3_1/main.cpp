@@ -1,5 +1,20 @@
+/*
+ Реализуйте структуру данных типа “множество строк” на основе динамической
+хеш-таблицы с открытой адресацией. Хранимые строки непустые и состоят из строчных латинских букв.
+Хеш-функция строки должна быть реализована с помощью вычисления значения многочлена методом Горнера.
+Начальный размер таблицы должен быть равным 8-ми. Перехеширование выполняйте
+при добавлении элементов в случае, когда коэффициент заполнения таблицы достигает 3/4.
+Структура данных должна поддерживать операции добавления строки в множество,
+удаления строки из множества и проверки принадлежности данной строки множеству.
+ 1_2.​ Для разрешения коллизий используйте двойное хеширование.
+ */
+
 #include <iostream>
 #include <vector>
+#include <cassert>
+
+#define HASH_P1 19
+#define HASH_P2 17
 
 using namespace std;
 
@@ -27,95 +42,139 @@ public:
     bool Add( string& key );
     bool Delete( string& key );
     HashMap( int );
-    int Hash( const string& key, int size ) const;
-    int Hash2( int key ) const;
+    int Hash( const string& key ) const;
+    int Hash2( const string &key ) const;
     void RebuildHashMap();
 };
 
-int HashMap::Hash(const string &key, int size) const {
+// хеш1
+int HashMap::Hash(const string &key) const {
     int hash = 0;
-    int a = 3;                      // константа, которая является взаимно простым числом с размером массива
-    for( int i = 0; i < size; i++ ){
-        hash = ( hash * a + key[i] ) % arrSize;
+    for(int i = key.size() - 1; i >= 0; i--) {
+        hash += (HASH_P1 * hash + key[i]) % arrSize;
     }
-    return hash;
+    return hash % arrSize;
 }
 
-int HashMap::Hash2( int key) const {
-    return ( key % ( arrSize - 1 ) ) + 1;
+// хеш2
+int HashMap::Hash2( const string &key ) const {
+    int hash = 0;
+    for(int i = key.size() - 1; i >= 0; i--) {
+        hash += (HASH_P2 * hash + key[i]) % arrSize;
+    }
+    return (2 * hash + 1) % arrSize;
 }
 
+// конструктор хеш-таблицы
 HashMap::HashMap( int size ) {
     arr.resize(size);
     elemInArr = 0;
     arrSize = size;
-    cout << "arr.size = " << arr.size() << endl;
     limit = arrSize * 0.75;        // 3/4 от размера массива
-    cout << "limit = " << limit << endl;
 }
 
+// проверкаа на принадлежность хеш-таблице
 bool HashMap::Has( const string &key, int& position ) const {
-    for( int i = 0; i < arrSize; i++ ){
-        int index = ( Hash( key, key.length() ) + i * Hash2( Hash( key, key.length() ) ) ) % arrSize;
-        if( arr[index].status == empty ){
-            if( position == -1 ){           // назначаем позицию только в том случае, если до этого не встречалась ячейка с удаленным элементом
-                position = index;
-            }
-            return false;
-        }
-        if( arr[index].status == deleted ){
-            position = index;
-            continue;
-        }
-        if( arr[index].status == filled && arr[index].key == key ){
+    int h1 = Hash( key ),
+            h2 = Hash2( key );
+
+    for (int i = 0; i < arrSize; i++) {
+
+        if ( arr[h1].key == key && arr[h1].status != deleted ) {
+            position = h1;
             return true;
         }
+
+        if (arr[h1].status == empty && position < 0) {
+            position = h1;                            // назначаем позицию только в том случае, если до этого не встречалась ячейка с удаленным элементом
+            return false;
+        }
+
+        if ( arr[h1].status == deleted && position < 0 ) {
+            position = h1;
+        }
+
+        h1 = (h1 + h2) % arrSize;
     }
+    return false;
 }
 
+// добавление в хеш-таблицу
 bool HashMap::Add(string &key) {
     Entry ent = Entry( key );
     int index = -1;                      // индекс равен -1, поскольку такой позиции нет в векторе элементов
 
-    if ( Has( key, index ) ){
+    if ( Has( key, index ) )
         return false;
-    }
 
-    cout << index << endl;
+        arr[index] = ent;
+        elemInArr++;
 
-    if( elemInArr < limit ){
-            arr[index] = ent;
-    }
-    else {
+    if( elemInArr >= limit )
         RebuildHashMap();
-    }
-    elemInArr++;
+
+    return true;
 }
 
+// перехеширование при превышении размера
 void HashMap::RebuildHashMap() {
     vector<Entry> tmp = arr;
     elemInArr = 0;
     arrSize *= 2;
     limit = 0.75 * arrSize;
-    cout << "limit = " << limit << endl;
     vector<Entry>( arrSize ).swap( arr );
+
     for( int i = 0; i < arrSize / 2; i++ ){
+
         if( tmp[i].status == filled ){
             this->Add( tmp[i].key );
         }
     }
 }
 
+// удаление элемента по ключу
 bool HashMap::Delete(string &key) {
+    int position = -1;
+
+    if( Has( key, position ) ){
+        elemInArr--;
+        arr[position].status = deleted;
+        arr[position].key = "";
+        return true;
+    }
+
     return false;
 }
 
 
 int main() {
-    HashMap h( 8 );
-    for( int i = 1; i < 44; i++ ){
-        string s = "sdf" + to_string(i);
-        h.Add(s);
+
+    HashMap table( 8 );
+
+    char command = 0;
+    int position = -1;
+    std::string value;
+
+/*    value = "a";
+    cout << value.size() - 1 << endl;*/
+
+    while( std::cin >> command >> value ) {
+        position = -1;
+        bool commandSucceeded = false;
+        switch( command ) {
+            case '+':
+                commandSucceeded = table.Add( value );
+                break;
+            case '-':
+                commandSucceeded = table.Delete( value );
+                break;
+            case '?':
+                commandSucceeded = table.Has( value, position );
+                break;
+            default:
+                assert( false );
+        }
+        std::cout << ( commandSucceeded ? "OK" : "FAIL" ) << std::endl;
     }
     return 0;
 }
