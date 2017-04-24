@@ -3,34 +3,48 @@
 
 using namespace std;
 
-//template <class T>
-struct Entry{
-    string val;
-    int key;
-
-    Entry() : val("0"), key(0) {};
-    Entry( string& v, int k ) : val(v), key(k) {};
+enum EntryStatus{
+    empty, deleted, filled
 };
 
-//template <class T>
+struct Entry{
+    string key;
+    EntryStatus status;
+
+    Entry() : key(""), status(empty) {};
+    Entry( string& k ) : key(k), status(filled) {};
+};
+
 class HashMap{
 private:
-    vector<Entry> arr;
-    int arrSize;
-    int elemInArr;
-    int limit;
+    vector<Entry> arr;            // хеш-таблица
+    int arrSize;                  // размер хеш-таблицы
+    int elemInArr;                // количество эл-тов в хеш-таблице
+    int limit;                    // предльное значения заполнения, равное 0,75*arrSize
 
 public:
-    bool Has( string& key ) const;
-    void Add( string& key );
+    bool Has( const string& key, int& position ) const;
+    bool Add( string& key );
     bool Delete( string& key );
     HashMap( int );
-    int Hash( string& key, int size );
-    int Hash2( int key );
+    int Hash( const string& key, int size ) const;
+    int Hash2( int key ) const;
     void RebuildHashMap();
 };
 
-//template <class T>
+int HashMap::Hash(const string &key, int size) const {
+    int hash = 0;
+    int a = 3;                      // константа, которая является взаимно простым числом с размером массива
+    for( int i = 0; i < size; i++ ){
+        hash = ( hash * a + key[i] ) % arrSize;
+    }
+    return hash;
+}
+
+int HashMap::Hash2( int key) const {
+    return ( key % ( arrSize - 1 ) ) + 1;
+}
+
 HashMap::HashMap( int size ) {
     arr.resize(size);
     elemInArr = 0;
@@ -40,53 +54,44 @@ HashMap::HashMap( int size ) {
     cout << "limit = " << limit << endl;
 }
 
-//template <class T>
-bool HashMap::Has( string &key ) const {
-    return false;
-}
-
-//template <class T>
-int HashMap::Hash( string &key, int size ) {
-    int hash = 0;
-    int a = 3;                      // константа, которая является взаимно простым числом с размером массива
-    for( int i = 0; i < size; i++ ){
-        hash = ( hash * a + key[i] ) % arrSize;
+bool HashMap::Has( const string &key, int& position ) const {
+    for( int i = 0; i < arrSize; i++ ){
+        int index = ( Hash( key, key.length() ) + i * Hash2( Hash( key, key.length() ) ) ) % arrSize;
+        if( arr[index].status == empty ){
+            if( position == -1 ){           // назначаем позицию только в том случае, если до этого не встречалась ячейка с удаленным элементом
+                position = index;
+            }
+            return false;
+        }
+        if( arr[index].status == deleted ){
+            position = index;
+            continue;
+        }
+        if( arr[index].status == filled && arr[index].key == key ){
+            return true;
+        }
     }
-    return hash;
 }
 
-//template <class T>
-void HashMap::Add( string &key ) {
-    Entry ent = Entry( key, Hash( key, key.length() ) );
-    int index = ent.key;
+bool HashMap::Add(string &key) {
+    Entry ent = Entry( key );
+    int index = -1;                      // индекс равен -1, поскольку такой позиции нет в векторе элементов
+
+    if ( Has( key, index ) ){
+        return false;
+    }
+
     cout << index << endl;
 
     if( elemInArr < limit ){
-        if( arr[index].key == 0 || arr[index].val == "0" ){                  // костыли ( убрать в конечной реализации)
             arr[index] = ent;
-        }
-        else {
-            for( int i = 0; i < arrSize; i++ ){
-                index = ( Hash( key, key.length() ) + i * Hash2( Hash( key, key.length() ) ) ) % arrSize;
-                if( arr[index].key == 0 ){
-                    arr[index] = ent;
-                }
-            }
-        }
     }
     else {
-        cout << "rebuild ---------------------" << endl;
         RebuildHashMap();
     }
     elemInArr++;
 }
 
-//template <class T>
-int HashMap::Hash2( int key ) {             // данная функция оправдана только тогда, когда значение размера массива кратно 2
-    return ( key % ( arrSize - 1 ) ) + 1;
-}
-
-//template <class T>
 void HashMap::RebuildHashMap() {
     vector<Entry> tmp = arr;
     elemInArr = 0;
@@ -95,13 +100,16 @@ void HashMap::RebuildHashMap() {
     cout << "limit = " << limit << endl;
     vector<Entry>( arrSize ).swap( arr );
     for( int i = 0; i < arrSize / 2; i++ ){
-        if( tmp[i].val != "0" ){
-            /*Entry ent = Entry( tmp[i].val, Hash( tmp[i].val, tmp[i].val.len() ) );
-            arr[ent.key] = ent;*/
-            this->Add( tmp[i].val );
+        if( tmp[i].status == filled ){
+            this->Add( tmp[i].key );
         }
     }
 }
+
+bool HashMap::Delete(string &key) {
+    return false;
+}
+
 
 int main() {
     HashMap h( 8 );
@@ -111,3 +119,4 @@ int main() {
     }
     return 0;
 }
+
