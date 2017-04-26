@@ -4,7 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "C:/Users/Pasha/ClionProjects/TP/TP_algorithms/sem_3_3/main.cpp" "C:/Users/Pasha/ClionProjects/TP/TP_algorithms/sem_3_3/cmake-build-debug/CMakeFiles/sem_3_3.dir/main.cpp.obj"
+  "C:/Users/grigo/ClionProjects/TP/algorithms/TP_algorithms/sem_3_3/main.cpp" "C:/Users/grigo/ClionProjects/TP/algorithms/TP_algorithms/sem_3_3/cmake-build-debug/CMakeFiles/sem_3_3.dir/main.cpp.obj"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
