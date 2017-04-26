@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/grigo/ClionProjects/TP/algorithms/TP_algorithms/sem_3_2/main.cpp
+iostream
+-
+raseapif.h
+-
+

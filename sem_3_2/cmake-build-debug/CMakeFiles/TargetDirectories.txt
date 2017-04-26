@@ -1,0 +1,3 @@
+C:/Users/grigo/ClionProjects/TP/algorithms/TP_algorithms/sem_3_2/cmake-build-debug/CMakeFiles/sem_3_2.dir
+C:/Users/grigo/ClionProjects/TP/algorithms/TP_algorithms/sem_3_2/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/grigo/ClionProjects/TP/algorithms/TP_algorithms/sem_3_2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
