@@ -15,7 +15,6 @@ using namespace std;
 
 int digit( long long number, int n, int& iter ){
     int result = 0;
-    //cout << "number = " << number;
 
     for( int i = 1; i <= n; i++ ){
         result = number % 256;
@@ -29,19 +28,16 @@ int digit( long long number, int n, int& iter ){
 }
 
 
-void CountingSort2( long long* a, int n, int count, bool& flag ) {
+void CountingSort2( long long* a, int n, int count ) {
     int iterator = 0;
     int* c = new int[BYTE];
+
     for( int i = 0; i < BYTE; ++i )
         c[i] = 0;
+
     for( int i = 0; i < n; ++i )
         ++c[digit( a[i], count, iterator )];
-    if( iterator == n ){
-        flag = true;
-        return;
-    } else {
-        iterator = 0;
-    }
+
     int sum = 0;
     for( int i = 1; i < BYTE; ++i ) {
         c[i] += c[i - 1]; // Концы групп.
@@ -51,23 +47,15 @@ void CountingSort2( long long* a, int n, int count, bool& flag ) {
         b[--c[digit( a[i], count, iterator )]] = a[i];
     }
 
-/*    cout << " i = " << count << endl;
-    for( int i = 0; i < n; i++ ){
-        cout << a[i] << " ";
-        cout << endl;
-    }*/
-
     delete[] c;
     memcpy( a, b, n * sizeof( long long) );
     delete [] b;
 }
 
 void LSDSort( long long* arr, int n ){
-    bool flag = false;
+
     for( int i = 0; i < sizeof( long long ); ++i ){
-        CountingSort2( arr, n, i + 1, flag );
-        if( flag )
-            break;
+        CountingSort2( arr, n, i + 1 );
     }
 }
 

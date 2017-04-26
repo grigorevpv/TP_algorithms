@@ -59,18 +59,19 @@ int HashMap::Hash( string &key, int size ) {
 void HashMap::Add( string &key ) {
     Entry ent = Entry( key, Hash( key, key.length() ) );
     int index = ent.key;
-    cout << index << endl;
 
     if( elemInArr < limit ){
         if( arr[index].key == 0 || arr[index].val == "0" ){                  // костыли ( убрать в конечной реализации)
             arr[index] = ent;
+            cout << "index = " << index << endl;
         }
         else {
             for( int i = 0; i < arrSize; i++ ){
                 index = ( Hash( key, key.length() ) + i * Hash2( Hash( key, key.length() ) ) ) % arrSize;
-                if( arr[index].key == 0 ){
+                if( arr[index].val == "0" ){
                     arr[index] = ent;
                 }
+                cout << "index(h2) = " << index << endl;
             }
         }
     }
@@ -105,8 +106,11 @@ void HashMap::RebuildHashMap() {
 
 int main() {
     HashMap h( 8 );
+//    string s = "sdf13";
+//    h.Add(s);
     for( int i = 1; i < 44; i++ ){
         string s = "sdf" + to_string(i);
+        cout << " s = " << s << endl;
         h.Add(s);
     }
     return 0;
