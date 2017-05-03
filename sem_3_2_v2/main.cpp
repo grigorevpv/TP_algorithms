@@ -7,10 +7,6 @@
 2_1. Выведите элементы в порядке in-order (слева направо).
  */
 
-/*
-9 10 4 3 2 7 8 5 1 6
- */
-
 #include <iostream>
 #include "vector"
 
@@ -29,7 +25,7 @@ private:
     int countNodes;
 public:
     CBinaryTree() : root(nullptr), countNodes(0) {};
-
+    ~CBinaryTree();
     void addNode(int val);
 
     void showTree();
@@ -101,6 +97,29 @@ void CBinaryTree::showTree() {
                 done = 1;
         }
     } /* end of while */
+}
+
+CBinaryTree::~CBinaryTree() {
+    CBinaryNode* tmp = root;
+
+    while( tmp ){
+        if( tmp->left )
+            tmp = tmp->left;
+        else if( tmp->right )
+            tmp = tmp->right;
+        else{
+            if( tmp->parent ) {
+                CBinaryNode *parent = tmp->parent;
+                delete tmp;
+                tmp = parent;
+                tmp->left = nullptr;
+                tmp->right = nullptr;
+            } else{
+                delete tmp;
+                break;
+            }
+        }
+    }
 }
 
 int main() {
