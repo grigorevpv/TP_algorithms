@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/grigo/ClionProjects/TP/algorithms/TP_algorithms/huffman_v2/Huffman.h
+
+C:/Users/grigo/ClionProjects/TP/algorithms/TP_algorithms/huffman_v2/main.cpp
+iostream
+-
+Huffman.h
+C:/Users/grigo/ClionProjects/TP/algorithms/TP_algorithms/huffman_v2/Huffman.h
+vector
+-
+map
+-
+algorithm
+-
+fstream
+-
+sstream
+-
+cassert
+-
+
